@@ -7,9 +7,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <body>
         <nav>
           {/* Prefetched when the link is hovered or enters the viewport */}
-          <Link href="/blog">Blog</Link>
+          <Link href="/blog"></Link>
           {/* No prefetching */}
-          <a href="/contact">Contact</a>
+          <a href="/contact"></a>
         </nav>
         {children}
       </body>
