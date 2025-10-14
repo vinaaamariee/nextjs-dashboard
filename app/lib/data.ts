@@ -13,20 +13,13 @@ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function fetchRevenue() {
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-     console.log('Fetching revenue data...');
-     await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql `SELECT * FROM revenue`;
-
-     console.log('Data fetch completed after 3 seconds.');
-
-    return data;
+    const data = await sql`SELECT * FROM revenue`;
+    return data.map((row: any) => ({
+      month: row.month,
+      revenue: Number(row.revenue),
+    }));
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    // ...existing error handling...
   }
 }
 
@@ -38,15 +31,15 @@ export async function fetchLatestInvoices() {
       JOIN customers ON invoices.customer_id = customers.id
       ORDER BY invoices.date DESC
       LIMIT 5`;
-
-    const latestInvoices = data.map((invoice) => ({
-      ...invoice,
+    return data.map((invoice: any) => ({
+      id: invoice.id,
+      name: invoice.name,
+      image_url: invoice.image_url,
+      email: invoice.email,
       amount: formatCurrency(invoice.amount),
     }));
-    return latestInvoices;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    // ...existing error handling...
   }
 }
 
