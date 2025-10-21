@@ -1,9 +1,9 @@
 import type { NextConfig } from 'next';
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   experimental: {
-    ppr: 'incremental'
-  }
+    cacheComponents: true, 
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
