@@ -1,9 +1,8 @@
-import type { NextConfig } from 'next';
-
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   experimental: {
-    ppr: 'incremental'
-  }
+    cacheComponents: true, // enables Partial Prerendering (PPR)
+  },
 };
 
-export default nextConfig;
+module.exports = nextConfig;
