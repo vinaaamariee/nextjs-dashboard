@@ -142,6 +142,11 @@ export async function fetchInvoicesPages(query: string) {
 
 export async function fetchInvoiceById(id: string) {
   try {
+    if (!id) {
+      console.error("Missing invoice ID!");
+      throw new Error("Invoice ID is undefined.");
+    }
+
     const data = await sql<InvoiceForm[]>`
       SELECT
         invoices.id,
@@ -152,18 +157,20 @@ export async function fetchInvoiceById(id: string) {
       WHERE invoices.id = ${id};
     `;
 
-    const invoice = data.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
+    const invoice = data.map((row) => ({
+      ...row,
+      amount: row.amount / 100, // convert cents → dollars
     }));
 
-    return invoice[0];
+    console.log("Fetched invoice:", invoice);
+
+    return invoice[0] ?? null; // avoid undefined error
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    console.error("Database Error:", error);
+    throw new Error("Failed to fetch invoice.");
   }
 }
+
 
 export async function fetchCustomers() {
   try {
