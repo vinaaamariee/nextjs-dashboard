@@ -15,6 +15,8 @@ export default async function Page( {
      query?: string;
      page?: string };
 }) {
+  const params = await searchParams;
+  
   const query = searchParams?.query ||'';
   const currentPage = Number(searchParams?.page) || 1;
     
