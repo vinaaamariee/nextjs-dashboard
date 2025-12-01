@@ -1,5 +1,13 @@
 import authHandler from '@/auth'
 
+// Log the imported handler shape to help diagnose interop issues.
+try {
+	// eslint-disable-next-line no-console
+	console.log('Imported authHandler type:', typeof authHandler, 'keys:', authHandler ? Object.keys(authHandler) : null)
+} catch (e) {
+	// ignore logging errors
+}
+
 // Ensure we export route handlers that Next expects (functions).
 // Some bundling/interop can cause the imported value to be an object
 // instead of a callable function. Detect that and wrap if necessary.
