@@ -63,41 +63,12 @@ const nextAuthHandler = NextAuth({
   ],
 });
 
-// Create a callable wrapper as the default export so the app route
-// always imports a function. Different NextAuth/packaging versions
-// may return different shapes (function, object with `.default`,
-// object with `.auth`), so detect the runtime shape and delegate.
-async function callIfFunction(fn: any, ...args: any[]) {
-  if (typeof fn === 'function') return fn(...args);
-  return undefined;
-}
-
-export default function authRoute(...args: any[]) {
-  const h: any = nextAuthHandler as any;
-
-  // Try several common shapes for the handler
-  const candidates = [h, h?.default, h?.auth, h?.handler];
-
-  for (const cand of candidates) {
-    if (typeof cand === 'function') {
-      // Delegate to the underlying handler function
-      return cand(...args);
-    }
-  }
-
-  // If nothing is callable, log details for debugging and return a Response
-  try {
-    // eslint-disable-next-line no-console
-    console.error('NextAuth handler is not callable. Exported value keys:', h ? Object.keys(h) : h);
-  } catch (e) {
-    // ignore
-  }
-
-  return new Response('Auth handler misconfigured on server', { status: 500 });
-}
+// Export default handler for the NextAuth route
+export default nextAuthHandler;
 
 // Also expose named helpers for existing server-action imports.
 // NextAuth's handler may attach helpers on the returned function.
+// Use `as any` to avoid strict typing issues while preserving runtime behavior.
 const _helpers: any = nextAuthHandler as any;
 export const auth = _helpers.auth ?? _helpers;
 export const signIn = _helpers.signIn ?? _helpers.signin ?? (async () => {
