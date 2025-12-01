@@ -162,8 +162,7 @@ export async function fetchInvoiceById(id: string) {
       amount: row.amount / 100, // convert cents → dollars
     }));
 
-    console.log("Fetched invoice:", invoice);
-
+    console.log(invoice);
     return invoice[0] ?? null; // avoid undefined error
   } catch (error) {
     console.error("Database Error:", error);
