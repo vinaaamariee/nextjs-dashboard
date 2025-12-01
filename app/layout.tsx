@@ -1,5 +1,5 @@
 import '@/app/ui/global.css';
-import { inter }  from '@/app/ui/fonts';
+// Removed `inter` import — not used in layout
 import Link from 'next/link'
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

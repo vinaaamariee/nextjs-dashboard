@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    cacheComponents: true, // enables Partial Prerendering (PPR)
-  },
+	cacheComponents: true,
 };
 
-module.exports = nextConfig;
+export default nextConfig;
