@@ -4,28 +4,32 @@ import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import postgres from 'postgres';
-import { signIn } from '@/auth';
-import { AuthError } from 'next-auth';
+import bcrypt from 'bcrypt';
 
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export async function authenticate(
-  prevState: string | undefined,
+  prevState: string | null | undefined,
   formData: FormData,
 ) {
+  const email = formData.get('email')?.toString();
+  const password = formData.get('password')?.toString();
+  if (!email || !password) {
+    return 'Missing credentials.';
+  }
+
   try {
-    await signIn('credentials', formData);
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return 'Invalid credentials.';
-        default:
-          return 'Something went wrong.';
-      }
-    }
-    throw error;
+    const user = await sql`SELECT * FROM users WHERE email=${email}`;
+    const foundUser = user[0];
+    if (!foundUser) return 'Invalid credentials.';
+    const passwordsMatch = await bcrypt.compare(password, foundUser.password);
+    if (!passwordsMatch) return 'Invalid credentials.';
+    // At this point, credentials are valid — create a session or follow your app's auth flow.
+    return null;
+  } catch (err) {
+    console.error(err);
+    return 'Something went wrong.';
   }
 }
 
@@ -105,7 +109,21 @@ export async function deleteInvoice(id: string) {
     revalidatePath('/dashboard/invoices');
   } catch (error) {
     console.error(error);
-    return { message: 'Database Error: Failed to Delete Invoice.' };
+    
+  }
+}
+
+export async function deleteInvoiceAction(formData: FormData) {
+  const id = formData.get('id')?.toString();
+  if (!id) return;
+  try {
+    await deleteInvoice(id);
+    revalidatePath('/dashboard/invoices');
+    // No return value for server action used on forms
+    return;
+  } catch (error) {
+    console.error(error);
+    return;
   }
 }
 
