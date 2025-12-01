@@ -1,12 +1,12 @@
 import NextAuth from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
+import Credentials from 'next-auth/providers/credentials';
 import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
 import bcrypt from 'bcrypt';
 import postgres from 'postgres';
  
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+ const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
  
 async function getUser(email: string): Promise<User | undefined> {
   try {
@@ -14,46 +14,26 @@ async function getUser(email: string): Promise<User | undefined> {
     return user[0];
   } catch (error) {
     console.error('Failed to fetch user:', error);
-    return undefined;
+    throw new Error('Failed to fetch user.');
   }
 }
- 
-export default NextAuth({
+
+export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
-  providers: [
-    Credentials({
-      credentials: {
-        email: { label: 'Email', type: 'text' },
-        password: { label: 'Password', type: 'password' },
-      },
+   providers: [ Credentials({
       async authorize(credentials) {
-        try {
-          // DEBUG: log that authorize was called and the incoming email (no password)
-          console.log('Authorize called with credentials:', { email: credentials?.email });
-          const parsedCredentials = z
-            .object({ email: z.string().email(), password: z.string().min(6) })
-            .safeParse(credentials);
+        const parsedCredentials = z
+          .object({ email: z.string().email(), password: z.string().min(6) })
+          .safeParse(credentials);
 
-          if (!parsedCredentials.success) {
-            return null;
-          }
-
+           if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           const user = await getUser(email);
-          console.log('Authorize: user found?', !!user);
           if (!user) return null;
-
-          const passwordsMatch = await bcrypt.compare(password, user.password);
-          console.log('Authorize: passwordsMatch?', passwordsMatch);
-          if (!passwordsMatch) return null;
-
-          // Return a minimal user object (avoid returning password)
-          return { id: user.id, name: user.name, email: user.email } as User;
-        } catch (err) {
-          console.error('Authorization error:', err);
-          return null;
+           const passwordsMatch = await bcrypt.compare(password, user.password);
         }
+         console.log('Invalid credentials');
+        return null;
       },
-    }),
-  ],
+    }),],
 });

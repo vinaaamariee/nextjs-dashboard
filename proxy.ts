@@ -1,5 +1,9 @@
-// Re-export our local middleware to avoid runtime mismatch with next-auth middleware
-export { middleware, config } from './middleware';
-
-// Proxy matcher — exclude Next internals and static assets
-// proxy.ts is kept for compatibility; middleware/config are re-exported from middleware.ts
+import NextAuth from 'next-auth';
+import { authConfig } from './auth.config';
+ 
+export default NextAuth(authConfig).auth;
+ 
+export const config = {
+  // https://nextjs.org/docs/app/api-reference/file-conventions/proxy#matcher
+  matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
+};
