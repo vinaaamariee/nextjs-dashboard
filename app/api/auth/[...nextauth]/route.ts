@@ -4,7 +4,7 @@ import authHandler from '@/auth'
 try {
 	// eslint-disable-next-line no-console
 	console.log('Imported authHandler type:', typeof authHandler, 'keys:', authHandler ? Object.keys(authHandler) : null)
-} catch (e) {
+} catch {
 	// ignore logging errors
 }
 
