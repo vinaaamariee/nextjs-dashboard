@@ -1,7 +1,6 @@
 import { PencilIcon as InvoicePencilIcon, PlusIcon as InvoicePlusIcon, TrashIcon as InvoiceTrashIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { deleteInvoiceAction } from '@/app/lib/actions';
-
+import { deleteInvoice } from '@/app/lib/actions';
 export function CreateInvoice() {
   return (
     <Link
@@ -15,8 +14,9 @@ export function CreateInvoice() {
 }
 
 export function DeleteInvoice({ id }: { id: string }) {
+    const deleteInvoiceWithId = deleteInvoice.bind(null, id);
   return (
-    <form action={deleteInvoiceAction}>
+     <form action={deleteInvoiceWithId}>
       {/* The form action handles the submission. The id is passed via hidden input. */}
       <input type="hidden" name="id" value={id} />
       <button type="submit" className="rounded-md border p-2 hover:bg-gray-100">
