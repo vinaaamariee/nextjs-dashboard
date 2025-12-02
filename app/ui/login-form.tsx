@@ -1,4 +1,4 @@
-"use client";
+'use client';
  
 import { lusitana } from '@/app/ui/fonts';
 import {
@@ -11,10 +11,9 @@ import { Button } from '@/app/ui/button';
 import { useActionState } from 'react';
 import { authenticate } from '@/app/lib/actions';
 import { useSearchParams } from 'next/navigation';
-
  
 export default function LoginForm() {
-   const searchParams = useSearchParams();
+  const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
   const [errorMessage, formAction, isPending] = useActionState(
     authenticate,
@@ -22,7 +21,7 @@ export default function LoginForm() {
   );
  
   return (
-     <form action={formAction} className="space-y-3">
+    <form action={formAction} className="space-y-3">
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={`${lusitana.className} mb-3 text-2xl`}>
           Please log in to continue.
@@ -68,7 +67,7 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
-            <input type="hidden" name="redirectTo" value={callbackUrl} />
+        <input type="hidden" name="redirectTo" value={callbackUrl} />
         <Button className="mt-4 w-full" aria-disabled={isPending}>
           Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
@@ -77,7 +76,7 @@ export default function LoginForm() {
           aria-live="polite"
           aria-atomic="true"
         >
-           {errorMessage && (
+          {errorMessage && (
             <>
               <ExclamationCircleIcon className="h-5 w-5 text-red-500" />
               <p className="text-sm text-red-500">{errorMessage}</p>
